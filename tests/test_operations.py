@@ -1,12 +1,12 @@
-"""Tests for arithmetic operations."""
+"""Tests for the calculator's arithmetic operations."""
 
 import pytest
 
-from app.operation import add, subtract, multiply, divide
+from calculator.operations import add, subtract, multiply, divide
 
 
 @pytest.mark.parametrize(
-    "operation, a, b, expected",
+    "operation,a,b,expected",
     [
         (add, 2, 3, 5),
         (add, -2, 2, 0),
@@ -27,7 +27,7 @@ from app.operation import add, subtract, multiply, divide
     ],
 )
 def test_operations(operation, a, b, expected):
-    """Check each operation with several number combinations."""
+    """Check each operation with several types of numbers."""
     assert operation(a, b) == pytest.approx(expected)
 
 

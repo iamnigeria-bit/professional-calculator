@@ -1,5 +1,5 @@
-"""Start the calculator with python -m app."""
+"""Execute with python -m app."""
+from .calculator_repl import main
 
-from app.calculator import Calculator
-
-Calculator().run()
+if __name__ == "__main__":
+    main()

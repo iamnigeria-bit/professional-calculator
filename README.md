@@ -1,33 +1,34 @@
-# Professional Calculator
+# Command-Line Calculator
 
-A Python command-line calculator with arithmetic operations,
-input validation, and calculation history.
+A Python calculator that runs in the terminal. It uses a
+Read-Eval-Print Loop (REPL), allowing users to perform multiple
+calculations until they choose to exit.
 
 ## Features
 
 - Addition, subtraction, multiplication, and division
-- Continuous interaction through a Read-Eval-Print Loop (REPL)
-- Help and calculation history commands
-- Helpful messages for invalid input and division by zero
-- Validation for nonfinite numbers and overflowing results
-- Clean exit using the exit command, Ctrl+C, or end-of-input
+- Support for negative numbers and decimals
+- Input validation with helpful error messages
+- Division-by-zero handling
+- Rejection of infinite numbers, NaN, and nonfinite results
+- Automated tests with 100% statement and branch coverage
 
 ## Setup
 
-From the project directory, create and activate a virtual environment.
+This project was tested locally with Python 3.9.6.
 
-### macOS or Linux
+Clone the repository and enter the project folder:
+
+```bash
+git clone https://github.com/iamnigeria-bit/command-line-calculator.git
+cd command-line-calculator
+```
+
+Create and activate a virtual environment on macOS or Linux:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-```
-
-### Windows PowerShell
-
-```powershell
-py -m venv .venv
-.venv\Scripts\Activate.ps1
 ```
 
 Install the testing dependencies:
@@ -36,95 +37,142 @@ Install the testing dependencies:
 python -m pip install -r requirements.txt
 ```
 
+Activate the virtual environment again whenever you open a new
+terminal session.
+
 ## Run the Calculator
 
+From the project folder, run:
+
 ```bash
-python -m app
+python -m calculator
 ```
 
-Enter an operation: +, -, *, or /.
-Then enter the first and second numbers when prompted.
+Enter an operation: +, -, *, or /. Then enter the two numbers
+when prompted.
 
 Example:
 
 ```text
-Operation or command: +
+Operation: +
 First number: 2
 Second number: 3
 Result: 5.0
 ```
 
-Available commands:
+The calculator asks for another operation after each calculation.
+Type `exit` at the operation prompt to quit, or press Ctrl+C at
+any prompt.
 
-- help: Display instructions.
-- history: Display successful calculations from this session.
-- exit: Close the calculator.
-
-History is stored in memory and is cleared when the program closes.
-At a number prompt, use Ctrl+C to quit.
+Invalid numbers trigger another number prompt. Invalid operations,
+division by zero, and nonfinite results display an error message
+without closing the calculator.
 
 ## Project Organization
 
-- app/operation/__init__.py: Arithmetic functions.
-- app/calculation/__init__.py: Calculation and CalculationFactory classes.
-- app/calculator/__init__.py: User interaction and session history.
-- app/__main__.py: Application entry point.
-- tests/test_operations.py: Parameterized arithmetic tests.
-- tests/test_calculations.py: Calculation and validation tests.
-- tests/test_calculator.py: Interaction, history, and error-recovery tests.
+- `calculator/operations.py`: arithmetic functions
+- `calculator/cli.py`: prompts, validation, and the REPL
+- `calculator/__main__.py`: starts the application
+- `calculator/__init__.py`: marks the calculator package
+- `tests/test_operations.py`: parameterized arithmetic tests
+- `tests/test_cli.py`: interaction, error recovery, and startup tests
+- `.github/workflows/tests.yml`: automated testing workflow
+- `requirements.txt`: testing dependencies
 
-## Design
-
-The Calculation class stores the operands and operation.
-CalculationFactory validates inputs and creates Calculation objects.
-The Calculator class manages prompts, results, and history.
-
-Arithmetic functions are reused instead of duplicated, following
-the Don't Repeat Yourself (DRY) principle.
-
-### Error Handling
-
-Look Before You Leap (LBYL) is used to check supported operations
-and reject division by zero before attempting the calculation.
-
-Easier to Ask Forgiveness than Permission (EAFP) is used when
-converting inputs to numbers. The program attempts conversion
-and catches conversion errors.
-
-Invalid calculations display helpful messages and are not added
-to history. Users can continue calculating after an error.
+Arithmetic is separated from user interaction. A shared number-reading
+function and an operation dictionary reduce repeated code.
 
 ## Testing
 
 Run all tests:
 
 ```bash
-python -m pytest
+python -m pytest -v
 ```
 
-Check line and branch coverage and require 100%:
+Run tests with statement and branch coverage, requiring 100%:
 
 ```bash
-python -m pytest --cov=app --cov-branch --cov-report=term-missing --cov-fail-under=100
+python -m pytest --cov=calculator --cov-branch --cov-report=term-missing --cov-fail-under=100
 ```
 
-The test suite includes parameterized cases for arithmetic,
-invalid inputs, division by zero, and numeric overflow.
-Mocked input simulates user interaction and interruptions.
+The current suite contains 41 passing tests. It checks arithmetic,
+invalid input, division by zero, oversized results, repeated
+calculations, quitting, interrupted input, and module startup.
 
-Local verification: 74 tests passed with 100% line and branch coverage.
+Coverage measures which code paths the tests execute; it does not
+guarantee that every possible bug has been eliminated.
 
-### Coverage Exclusions
+## Continuous Integration
 
-The comment `# pragma: no cover` can exclude a line or clause
-from coverage measurement. Exclusions should be justified rather
-than used to hide untested application behavior.
+The GitHub Actions workflow runs on pushes and pull requests.
+It installs the dependencies and runs the tests with coverage.
 
-This project does not need coverage exclusions. Its entry point,
-interactive prompts, and error handling are exercised by tests.
+The workflow fails if any test fails or if coverage falls below 100%.
+---
 
-## Numeric Limitations
+## Module 5 — Enhanced calculator (new `app/` package)
 
-The calculator uses Python floating-point numbers. Some decimal
-results may have small rounding differences. Tests use
-pytest.approx when comparing calculated numeric results.
+This project preserves the original `calculator/` application and its tests, while adding
+an enhanced modular implementation in `app/` following the assignment's requested structure.
+
+### Install and run
+
+Use Python 3.9 or newer. From the project root:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate         # on Windows: .venv\\Scripts\\activate
+python -m pip install -r requirements.txt
+python -m app
+```
+
+Enter an operation followed by two numbers. Available operations:
+`+`, `-`, `*`, `/`, `^`, `root`, and the word equivalents (`add`, `subtract`,
+`multiply`, `divide`, `power`). `root` takes the radicand first and the degree second:
+`root(27, 3)` returns `3.0`. Negative radicands are supported for odd integer degrees.
+Complex results and non-finite inputs are rejected.
+
+Commands: `help`, `history`, `clear`, `undo`, `redo`, `save`, `load`, `exit`.
+The calculation history is stored as a pandas DataFrame and auto-saved to CSV by default.
+Undo and redo restore prior **history states**; new calculations clear the redo stack.
+
+### Settings
+
+Copy `.env.example` to `.env` to customize:
+
+- `CALC_HISTORY_FILE`: CSV path (default `calculator_history.csv`)
+- `CALC_AUTO_SAVE`: `true` or `false` (default `true`)
+- `CALC_MAX_HISTORY`: positive integer (default `1000`)
+
+The `.env` file is ignored by Git; CSV history files are ignored by default.
+
+### Design patterns and modules
+
+- **Strategy**: `app/operations.py` operation subclasses implement `execute`.
+- **Factory**: `OperationFactory.create()` selects a strategy from input.
+- **Observer**: `HistoryObserver` and `AutoSaveObserver` respond to successful calculations.
+- **Memento**: `Caretaker` stores history snapshots for undo and redo.
+- **Facade**: `Calculator` offers a simplified API for these subsystems.
+- `app/calculation.py`: immutable calculation records.
+- `app/calculator_config.py`: environment settings and validation.
+- `app/history.py`: pandas DataFrame/CSV persistence.
+- `app/input_validators.py`: finite-number checks, LBYL and EAFP demonstrations.
+- `app/exceptions.py`: domain errors.
+- `app/calculator_repl.py`: interactive command-line application.
+
+### Tests and continuous integration
+
+```bash
+python -m pytest tests/ --cov=app --cov-branch --cov-report=term-missing --cov-fail-under=100
+```
+
+The workflow at `.github/workflows/python-app.yml` runs all old and new tests
+and requires **100% statement and branch coverage of the new `app/` package**.
+The legacy `calculator/` package is still tested, but is not included in the
+new-app coverage denominator.
+
+### GitHub submission
+
+Push this project to your existing repository and submit the GitHub repository URL
+in Canvas. Before pushing, run the tests locally and inspect the GitHub Actions run.
