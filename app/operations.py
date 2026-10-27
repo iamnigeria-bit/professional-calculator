@@ -51,10 +51,18 @@ class Root(Operation):
             return a ** (1 / b)
         except (OverflowError, ZeroDivisionError) as exc:
             raise OperationError("Invalid root calculation.") from exc
+class Modulus(Operation):
+    """Calculate the remainder after division."""
+
+    def execute(self, a, b):
+        if b == 0:
+            raise OperationError("Cannot calculate modulus by zero.")
+        return a % b
 
 class OperationFactory:
     """Factory maps symbols/words to interchangeable strategies."""
-    _strategies = {
+    _strategies = {"modulus": Modulus,
+"mod": Modulus,
         "+": Add, "add": Add, "-": Subtract, "subtract": Subtract,
         "*": Multiply, "multiply": Multiply, "/": Divide, "divide": Divide,
         "^": Power, "power": Power, "root": Root,
