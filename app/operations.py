@@ -59,10 +59,20 @@ class Modulus(Operation):
             raise OperationError("Cannot calculate modulus by zero.")
         return a % b
 
+class IntegerDivision(Operation):
+    """Divide two numbers and discard the fractional part."""
+
+    def execute(self, a, b):
+        if b == 0:
+            raise OperationError("Cannot divide by zero.")
+        return int(a / b)
+
 class OperationFactory:
     """Factory maps symbols/words to interchangeable strategies."""
     _strategies = {"modulus": Modulus,
 "mod": Modulus,
+"int_divide": IntegerDivision,
+"integer_division": IntegerDivision,
         "+": Add, "add": Add, "-": Subtract, "subtract": Subtract,
         "*": Multiply, "multiply": Multiply, "/": Divide, "divide": Divide,
         "^": Power, "power": Power, "root": Root,
