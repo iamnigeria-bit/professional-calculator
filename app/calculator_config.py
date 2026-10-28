@@ -12,6 +12,12 @@ class CalculatorConfig:
     auto_save: bool
     max_history: int
 
+    log_dir: Path = Path("logs")
+    history_dir: Path = Path(".")
+    precision: int = 2
+    max_input_value: float = 1_000_000_000.0
+    default_encoding: str = "utf-8"
+
     @classmethod
     def from_env(cls):
         load_dotenv()
@@ -45,4 +51,23 @@ class CalculatorConfig:
         if limit <= 0:
             raise ConfigurationError("CALC_MAX_HISTORY must be positive.")
 
-        return cls(Path(raw_path).expanduser(), raw_auto == "true", limit)
+        return cls(
+            history_file=Path(raw_path).expanduser(),
+            auto_save=raw_auto == "true",
+            max_history=limit,
+            log_dir=Path(
+                os.getenv("CALCULATOR_LOG_DIR", "logs")
+            ).expanduser(),
+            history_dir=Path(
+                os.getenv("CALCULATOR_HISTORY_DIR", ".")
+            ).expanduser(),
+            precision=int(
+                os.getenv("CALCULATOR_PRECISION", "2")
+            ),
+            max_input_value=float(
+                os.getenv("CALCULATOR_MAX_INPUT_VALUE", "1000000000")
+            ),
+            default_encoding=os.getenv(
+                "CALCULATOR_DEFAULT_ENCODING", "utf-8"
+            ),
+        )
