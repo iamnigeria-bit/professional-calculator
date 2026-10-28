@@ -75,6 +75,12 @@ class Percentage(Operation):
             raise OperationError("Cannot calculate percentage with a zero denominator.")
         return (a / b) * 100
 
+class AbsoluteDifference(Operation):
+    """Calculate the absolute difference between two numbers."""
+
+    def execute(self, a, b):
+        return abs(a - b)
+
 class OperationFactory:
     """Factory maps symbols/words to interchangeable strategies."""
     _strategies = {"modulus": Modulus,
@@ -83,6 +89,8 @@ class OperationFactory:
 "percent": Percentage,
 "int_divide": IntegerDivision,
 "integer_division": IntegerDivision,
+"abs_diff": AbsoluteDifference,
+"absolute_difference": AbsoluteDifference,
         "+": Add, "add": Add, "-": Subtract, "subtract": Subtract,
         "*": Multiply, "multiply": Multiply, "/": Divide, "divide": Divide,
         "^": Power, "power": Power, "root": Root,

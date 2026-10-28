@@ -66,3 +66,22 @@ def test_percentage_by_zero():
     operation = OperationFactory.create("percentage")
     with pytest.raises(OperationError):
         operation.execute(25, 0)
+
+@pytest.mark.parametrize(
+    "a, b, expected",
+    [
+        (10, 3, 7),
+        (3, 10, 7),
+        (-5, 2, 7),
+        (4, 4, 0),
+        (-5, -12, 7),
+    ],
+)
+def test_absolute_difference(a, b, expected):
+    operation = OperationFactory.create("abs_diff")
+    assert operation.execute(a, b) == expected
+
+
+def test_absolute_difference_alias():
+    operation = OperationFactory.create("absolute_difference")
+    assert operation.execute(20, 35) == 15
