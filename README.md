@@ -11,8 +11,7 @@ calculations until they choose to exit.
 - Input validation with helpful error messages
 - Division-by-zero handling
 - Rejection of infinite numbers, NaN, and nonfinite results
-- Automated tests with 100% statement and branch coverage
-
+Automated tests with 100% local statement coverage
 ## Setup
 
 This project was tested locally with Python 3.9.6.
@@ -20,9 +19,8 @@ This project was tested locally with Python 3.9.6.
 Clone the repository and enter the project folder:
 
 ```bash
-git clone https://github.com/iamnigeria-bit/command-line-calculator.git
-cd command-line-calculator
-```
+git clone -b midterm-enhancements https://github.com/iamnigeria-bit/professional-calculator.git
+cd professional-calculator```
 
 Create and activate a virtual environment on macOS or Linux:
 
@@ -174,5 +172,81 @@ new-app coverage denominator.
 
 ### GitHub submission
 
-Push this project to your existing repository and submit the GitHub repository URL
-in Canvas. Before pushing, run the tests locally and inspect the GitHub Actions run.
+
+## IS 601 Midterm Project Enhancements
+
+This project builds upon the Module 5 Professional Calculator with advanced arithmetic operations, design patterns, testing, and configuration management.
+
+### Additional Arithmetic Operations
+
+- Power: Raise a number to another power.
+- Root: Calculate the nth root of a number.
+- Modulus: Calculate the remainder after division.
+- Integer Division: Divide numbers and discard the fractional part.
+- Percentage: Calculate (a / b) * 100.
+- Absolute Difference: Calculate abs(a - b).
+
+### Command-Line Interface
+
+Start the calculator:
+
+```bash
+python -c "from app.calculator_repl import main; main()"
+```
+
+Supported commands include:
+
+- add, subtract, multiply, divide
+- power, root, modulus, int_divide, percent, abs_diff
+- history, clear, undo, redo
+- save, load, help, exit
+
+### Design Patterns
+
+- Factory Pattern: Creates arithmetic operation objects.
+- Memento Pattern: Supports undo and redo.
+- Observer Pattern: Records calculations and automatically saves history.
+
+### Logging and History
+
+The calculator records successful calculations and errors using Python logging.
+
+Calculation history can be saved to and loaded from CSV files using pandas.
+
+### Configuration
+
+Copy `.env.example` to `.env` to customize settings.
+
+Supported settings include:
+
+- CALCULATOR_HISTORY_FILE
+- CALCULATOR_AUTO_SAVE
+- CALCULATOR_MAX_HISTORY_SIZE
+- CALCULATOR_LOG_DIR
+- CALCULATOR_LOG_FILE
+- CALCULATOR_HISTORY_DIR
+- CALCULATOR_PRECISION
+- CALCULATOR_MAX_INPUT_VALUE
+- CALCULATOR_DEFAULT_ENCODING
+
+### Automated Testing
+
+Run all tests:
+
+```bash
+python -m pytest -v
+```
+
+Check coverage:
+
+```bash
+python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=90
+```
+
+Midterm verification produced 155 passing tests and 100% local statement coverage.
+
+### Continuous Integration
+
+GitHub Actions automatically runs the test suite on pushes and pull requests and requires at least 90% statement coverage.
+
+The workflow is defined in `.github/workflows/tests.yml`.
