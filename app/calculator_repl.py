@@ -1,3 +1,7 @@
+import logging
+import os
+from pathlib import Path
+
 """Facade, observers, and interactive REPL entry point."""
 from .calculator_config import CalculatorConfig
 from .calculator_memento import Caretaker
@@ -15,6 +19,35 @@ class HistoryObserver:
     def update(self, calculation, calculator):
         calculator.history.append(calculation)
 
+class LoggingObserver:
+    """Record successful calculations in a log file."""
+
+    def __init__(self):
+        folder = Path(os.getenv("CALCULATOR_LOG_DIR", "logs"))
+        filename = Path(os.getenv("CALCULATOR_LOG_FILE", "calculator.log"))
+        path = filename if filename.is_absolute() else folder / filename
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        self.logger = logging.getLogger(f"calculator.{path.resolve()}")
+        self.logger.setLevel(logging.INFO)
+        self.logger.propagate = False
+
+        if not self.logger.handlers:
+            handler = logging.FileHandler(path, encoding="utf-8")
+            handler.setFormatter(
+                logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+            )
+            self.logger.addHandler(handler)
+
+    def update(self, calculation, calculator):
+        self.logger.info(
+            "operation=%s a=%s b=%s result=%s",
+            calculation.operation,
+            calculation.a,
+            calculation.b,
+            calculation.result,
+        )
+
 class AutoSaveObserver:
     """Observer persists successful calculations when enabled."""
     def update(self, calculation, calculator):
@@ -27,10 +60,13 @@ class Calculator:
         self.config = config or CalculatorConfig.from_env()
         self.history = History(self.config.max_history)
         self.caretaker = Caretaker()
-        self.observers = [HistoryObserver(), AutoSaveObserver()]
+        self.observers = [
+            HistoryObserver(),
+            LoggingObserver(),
+            AutoSaveObserver(),
+        ]
         if load_existing:
             self.history.load(self.config.history_file)
-
     def calculate(self, operation, a, b):
         record = Calculation.perform(operation, a, b)
         self.caretaker.remember(self.history.entries)
@@ -98,4 +134,5 @@ def main():
             print("\nGoodbye!")
             return
         except CalculatorError as exc:
+            LoggingObserver().logger.error("Calculator error: %s", exc)
             print(f"Error: {exc}")
