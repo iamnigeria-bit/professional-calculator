@@ -43,3 +43,26 @@ def test_integer_division_by_zero():
     operation = OperationFactory.create("int_divide")
     with pytest.raises(OperationError):
         operation.execute(10, 0)
+
+@pytest.mark.parametrize(
+    "a, b, expected",
+    [
+        (25, 100, 25),
+        (50, 200, 25),
+        (30, 60, 50),
+        (0, 75, 0),
+    ],
+)
+def test_percentage(a, b, expected):
+    operation = OperationFactory.create("percentage")
+    assert operation.execute(a, b) == pytest.approx(expected)
+
+
+def test_percentage_alias():
+    operation = OperationFactory.create("percent")
+    assert operation.execute(75, 300) == pytest.approx(25)
+
+def test_percentage_by_zero():
+    operation = OperationFactory.create("percentage")
+    with pytest.raises(OperationError):
+        operation.execute(25, 0)

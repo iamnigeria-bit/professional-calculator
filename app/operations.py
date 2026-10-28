@@ -67,10 +67,20 @@ class IntegerDivision(Operation):
             raise OperationError("Cannot divide by zero.")
         return int(a / b)
 
+class Percentage(Operation):
+    """Calculate a as a percentage of b."""
+
+    def execute(self, a, b):
+        if b == 0:
+            raise OperationError("Cannot calculate percentage with a zero denominator.")
+        return (a / b) * 100
+
 class OperationFactory:
     """Factory maps symbols/words to interchangeable strategies."""
     _strategies = {"modulus": Modulus,
-"mod": Modulus,
+"mod": Modulus, 
+"percentage": Percentage,
+"percent": Percentage,
 "int_divide": IntegerDivision,
 "integer_division": IntegerDivision,
         "+": Add, "add": Add, "-": Subtract, "subtract": Subtract,
