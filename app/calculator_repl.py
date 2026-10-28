@@ -5,7 +5,10 @@ from .calculation_record import Calculation
 from .exceptions import CalculatorError
 from .history import History
 
-HELP = "Commands: + - * / ^ root, history, clear, undo, redo, save, load, help, exit"
+HELP = (
+    "Commands: + - * / ^ root modulus int_divide percent abs_diff, "
+    "history, clear, undo, redo, save, load, help, exit"
+)
 
 class HistoryObserver:
     """Observer automatically records successful calculations."""
