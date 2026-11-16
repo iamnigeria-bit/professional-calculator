@@ -10,3 +10,4 @@ coverage.xml
 .env
 calculator_history.csv
 logs/
+test_history_output/
