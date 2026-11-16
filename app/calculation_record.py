@@ -1,8 +1,13 @@
+
 """Calculation record and the calculation execution strategy."""
+
 from dataclasses import dataclass
 from datetime import datetime, timezone
+
+from .calculator_config import CalculatorConfig
 from .operations import OperationFactory
-from .input_validators import finite_number
+from .input_validators import finite_input, finite_number
+
 
 @dataclass(frozen=True)
 class Calculation:
@@ -14,7 +19,21 @@ class Calculation:
 
     @classmethod
     def perform(cls, operation, left, right):
-        """Run the selected strategy and create an immutable record."""
-        a, b = finite_number(left), finite_number(right)
-        answer = finite_number(OperationFactory.create(operation).execute(a, b))
-        return cls(operation, a, b, answer, datetime.now(timezone.utc).isoformat())
+        """Run an operation using validated inputs."""
+
+        config = CalculatorConfig.from_env()
+
+        a = finite_input(left, config.max_input_value)
+        b = finite_input(right, config.max_input_value)
+
+        answer = finite_number(
+            OperationFactory.create(operation).execute(a, b)
+        )
+
+        return cls(
+            operation,
+            a,
+            b,
+            answer,
+            datetime.now(timezone.utc).isoformat()
+        )
