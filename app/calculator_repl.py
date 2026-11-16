@@ -14,7 +14,7 @@ from .history import History
 
 HELP = (
     "Commands: + - * / ^ root modulus int_divide percent abs_diff, "
-    "history, clear, undo, redo, save, load, help, exit"
+    "history, stats, clear, undo, redo, save, load, help, exit"
 )
 
 
@@ -96,7 +96,6 @@ class Calculator:
     def __init__(self, config=None, load_existing=True):
         self.config = config or CalculatorConfig.from_env()
 
-        # Resolve history file using the configured directory.
         history_file = Path(self.config.history_file)
         history_dir = Path(self.config.history_dir)
 
@@ -239,6 +238,32 @@ def main():
                     )
                 )
 
+            elif command == "stats":
+                statistics = calculator.history.statistics()
+
+                if statistics is None:
+                    print("No calculations in history.")
+
+                else:
+                    precision = calculator.config.precision
+
+                    print("Calculation Statistics")
+                    print(
+                        f"Total calculations: {statistics['count']}"
+                    )
+                    print(
+                        f"Average result: "
+                        f"{statistics['average']:.{precision}f}"
+                    )
+                    print(
+                        f"Minimum result: "
+                        f"{statistics['minimum']:.{precision}f}"
+                    )
+                    print(
+                        f"Maximum result: "
+                        f"{statistics['maximum']:.{precision}f}"
+                    )
+
             elif command in {
                 "clear",
                 "undo",
@@ -268,7 +293,6 @@ def main():
                     right
                 )
 
-                # Display the configured number of decimal places.
                 print(
                     f"Result: {result:.{calculator.config.precision}f}"
                 )

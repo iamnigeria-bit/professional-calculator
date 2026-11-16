@@ -250,3 +250,55 @@ Midterm verification produced 155 passing tests and 100% local statement coverag
 GitHub Actions automatically runs the test suite on pushes and pull requests and requires at least 90% statement coverage.
 
 The workflow is defined in `.github/workflows/tests.yml`.
+
+
+## Optional Enhancement: Calculation Statistics
+
+This project includes an additional `stats` command that
+provides a statistical summary of the calculation history.
+
+### Features
+
+- Displays the total number of saved calculations.
+- Calculates the average calculation result.
+- Identifies the minimum calculation result.
+- Identifies the maximum calculation result.
+- Handles empty calculation histories gracefully.
+- Respects the configured maximum history size.
+- Applies the configured decimal precision when displaying results.
+
+### How to Use
+
+Start the calculator:
+
+```bash
+python -m app
+```
+
+Perform several calculations, then enter:
+
+```text
+stats
+```
+
+Example output:
+
+```text
+Calculation Statistics
+Total calculations: 3
+Average result: 20.00
+Minimum result: 10.00
+Maximum result: 30.00
+```
+
+The statistics are calculated from the current history
+using pandas.
+
+### Automated Testing
+
+The optional feature has five automated tests in:
+
+`tests/test_midterm_statistics.py`
+
+These tests verify empty histories, multiple calculations,
+single calculations, history limits, and REPL integration.
