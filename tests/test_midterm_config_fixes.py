@@ -83,3 +83,43 @@ def test_history_directory_and_encoding(
 
     assert len(restored.history.entries) == 1
     assert restored.history.entries[0].result == 15
+
+
+from app.calculator_config import CalculatorConfig
+from app.exceptions import ConfigurationError
+
+
+@pytest.mark.parametrize(
+    "setting, invalid_value",
+    [
+        ("CALCULATOR_PRECISION", "abc"),
+        ("CALCULATOR_PRECISION", "-1"),
+        ("CALCULATOR_PRECISION", "16"),
+        ("CALCULATOR_MAX_INPUT_VALUE", "0"),
+        ("CALCULATOR_MAX_INPUT_VALUE", "-10"),
+        ("CALCULATOR_MAX_INPUT_VALUE", "nan"),
+        ("CALCULATOR_MAX_INPUT_VALUE", "not_a_number"),
+        ("CALCULATOR_DEFAULT_ENCODING", "invalid-encoding-xyz"),
+        ("CALCULATOR_HISTORY_DIR", " "),
+        ("CALCULATOR_LOG_DIR", " "),
+    ],
+)
+def test_invalid_configuration_rejected(
+    monkeypatch, setting, invalid_value
+):
+    monkeypatch.setenv(setting, invalid_value)
+
+    with pytest.raises(ConfigurationError):
+        CalculatorConfig.from_env()
+
+
+def test_valid_configuration_accepted(monkeypatch):
+    monkeypatch.setenv("CALCULATOR_PRECISION", "4")
+    monkeypatch.setenv("CALCULATOR_MAX_INPUT_VALUE", "100")
+    monkeypatch.setenv("CALCULATOR_DEFAULT_ENCODING", "utf-8")
+
+    config = CalculatorConfig.from_env()
+
+    assert config.precision == 4
+    assert config.max_input_value == 100
+    assert config.default_encoding == "utf-8"
